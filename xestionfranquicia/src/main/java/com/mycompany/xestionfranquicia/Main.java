@@ -17,9 +17,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  *
@@ -224,7 +229,7 @@ public class Main {
         }else if (option.equalsIgnoreCase("9")){
             backup();
         }else if (option.equalsIgnoreCase("10")){
-            
+            rrss();
         }
         else if (option.equalsIgnoreCase("11")) {
             mainMenu();
@@ -526,5 +531,33 @@ public class Main {
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public static void rrss(){
+        XMLReader procesadorXML = null;
+        try {
+
+            //Creamos un parseador de texto e engadimoslle a nosa clase que vai parsear o texto
+            procesadorXML = XMLReaderFactory.createXMLReader();
+            TitleXML persoasXML = new TitleXML();
+            procesadorXML.setContentHandler(persoasXML);
+
+            //Indicamos o texto donde estan gardadas as persoas
+            InputSource web = new InputSource("http://ep00.epimg.net/rss/elpais/portada.xml");
+            procesadorXML.parse(web);
+
+            //Imprimimos os datos lidos no XML
+            ArrayList<Title> titles = persoasXML.getTitles();
+            for(int i=0;i<titles.size();i++){
+                Title tempTitle = titles.get(i);
+                System.out.println("Titular: " + tempTitle.getTitle());
+            }
+
+        } catch (SAXException e) {
+            System.out.println("Ocurriu un erro ao ler o arquivo XML");
+        } catch (IOException e) {
+            System.out.println("Ocurriu un erro ao ler o arquivo XML");
+        }
+
     }
 }
